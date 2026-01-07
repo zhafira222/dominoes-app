@@ -1,17 +1,67 @@
 "use client";
+
 import { useState } from "react";
 
 type Domino = [number, number];
 
 const DEFAULT_DATA: Domino[] = [
-  [6,1],[4,3],[5,1],[3,4],[1,1],[3,4],[1,2]
+  [6, 1],
+  [4, 3],
+  [5, 1],
+  [3, 4],
+  [1, 1],
+  [3, 4],
+  [1, 2],
 ];
 
 export default function Home() {
   const [data, setData] = useState<Domino[]>(DEFAULT_DATA);
   const [removeTotal, setRemoveTotal] = useState("");
 
-  const doubleCount = data.filter(([a,b]) => a === b).length;
+  const doubleCount = data.filter(([a, b]) => a === b).length;
+
+  // ===== FUNCTIONS (DITAMBAHKAN) =====
+
+  const sortAsc = () => {
+    setData([...data].sort((a, b) => a[0] + a[1] - (b[0] + b[1])));
+  };
+
+  const sortDesc = () => {
+    setData([...data].sort((a, b) => b[0] + b[1] - (a[0] + a[1])));
+  };
+
+  const flip = () => {
+    setData(data.map(([a, b]) => [b, a]));
+  };
+
+  const removeDup = () => {
+    setData(
+      data.filter(
+        (d, i, arr) =>
+          i ===
+          arr.findIndex(
+            x =>
+              (x[0] === d[0] && x[1] === d[1]) ||
+              (x[0] === d[1] && x[1] === d[0])
+          )
+      )
+    );
+  };
+
+  const reset = () => {
+    setData(DEFAULT_DATA);
+    setRemoveTotal("");
+  };
+
+  const removeByTotal = () => {
+    const total = Number(removeTotal);
+    if (isNaN(total)) return;
+
+    setData(data.filter(d => d[0] + d[1] !== total));
+    setRemoveTotal("");
+  };
+
+  // ===== UI (TIDAK DIUBAH) =====
 
   return (
     <main className="p-8 max-w-5xl mx-auto space-y-6">
@@ -47,14 +97,40 @@ export default function Home() {
 
       {/* Buttons */}
       <div className="flex gap-3 flex-wrap">
-        {["Sort (ASC)", "Sort (DESC)", "Flip", "Remove Dup", "Reset"].map(b => (
-          <button
-            key={b}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            {b}
-          </button>
-        ))}
+        <button
+          onClick={sortAsc}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Sort (ASC)
+        </button>
+
+        <button
+          onClick={sortDesc}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Sort (DESC)
+        </button>
+
+        <button
+          onClick={flip}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Flip
+        </button>
+
+        <button
+          onClick={removeDup}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Remove Dup
+        </button>
+
+        <button
+          onClick={reset}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Reset
+        </button>
       </div>
 
       {/* Remove Input */}
@@ -66,7 +142,10 @@ export default function Home() {
           onChange={e => setRemoveTotal(e.target.value)}
         />
         <br />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">
+        <button
+          onClick={removeByTotal}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
           Remove
         </button>
       </div>
