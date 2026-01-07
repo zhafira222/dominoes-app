@@ -61,7 +61,7 @@ export default function Home() {
     setRemoveTotal("");
   };
 
-  // ===== UI (TIDAK DIUBAH) =====
+  // = UI =
 
   return (
     <main className="p-8 max-w-5xl mx-auto space-y-6">
